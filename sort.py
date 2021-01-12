@@ -129,7 +129,7 @@ def handle_group(group):
                 first_stitched_row += row + INSIDE_BORDER
                 break
         else:
-            print("\033[1;31m !! No first row found in CNN image\033[0m")
+            print(f"\033[1;31m !! No first row found in {paper} image\033[0m")
             return
 
     # wapo: just burn the first 96 rows
@@ -196,7 +196,7 @@ for child in sorted(IMAGES_DIR.iterdir()):
                 print("\033[1;32m ✓ The above is a complete group!\033[0m")
                 handle_group(current_group)
             else:
-                print("\033[1;33m ⦜ Too many images, maybe drop some?\033[0m")
+                print("\033[0;33m ⦿ Too many images, maybe drop some?\033[0m")
         else:
             print("\033[0;31m × The above is not a complete group.\033[0m")
 
@@ -207,4 +207,6 @@ for child in sorted(IMAGES_DIR.iterdir()):
 
 
 for paper, counts in sorted(total_matched.items()):
-    print(paper + ": " + ", ".join(f"{entryno}-{rowno}: {count}" for (entryno, rowno), count in sorted(counts.items())))
+    total = sum(count for _, count in counts.items())
+    print(f"{paper}, total {total} - " + ", ".join(
+        f"{entryno}-{rowno}: {count}" for (entryno, rowno), count in sorted(counts.items())))
