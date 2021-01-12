@@ -97,6 +97,17 @@ def match_image(values, signature_library):
 
 
 def handle_group(group):
+        if {paper for paper, _, _ in group} == PAPERS:
+            if len(group) == 3:
+                print("\033[1;32m ✓ This is a complete group!\033[0m")
+                stitch_images(group)
+            else:
+                print("\033[0;33m ⦿ Too many images, maybe drop some?\033[0m")
+        else:
+            print("\033[0;31m × This is not a complete group.\033[0m")
+
+
+def stitch_images(group):
     """Crops and concatenates the images and saves it as a new image."""
 
     paper_order = ["cnn", "fox", "wap"]
@@ -190,20 +201,14 @@ for child in sorted(IMAGES_DIR.iterdir()):
         current_group.append((paper, child, time))
 
     else:
-        # finish handling current group
-        if {paper for paper, _, _ in current_group} == PAPERS:
-            if len(current_group) == 3:
-                print("\033[1;32m ✓ The above is a complete group!\033[0m")
-                handle_group(current_group)
-            else:
-                print("\033[0;33m ⦿ Too many images, maybe drop some?\033[0m")
-        else:
-            print("\033[0;31m × The above is not a complete group.\033[0m")
-
+        handle_group(current_group)
         current_group = [(paper, child, time)]
         earliest_in_group = time
 
     print(f"{child}: {paper} ({entryno}) at {rowno}")
+
+
+handle_group(current_group)
 
 
 for paper, counts in sorted(total_matched.items()):
