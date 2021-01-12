@@ -143,8 +143,9 @@ def stitch_images(group):
             print(f"\033[1;31m !! No first row found in {paper} image\033[0m")
             return
 
-    # wapo: just burn the first 96 rows
-    for i in range(96):
+    # wapo: just burn the first 96 rows if images is from before 2019, 108 rows if after
+    status_bar_height = 96 if times[2].year < 2019 else 108
+    for i in range(status_bar_height):
         next(images[2])
 
     # stitch subsequent rows together
