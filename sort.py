@@ -1,4 +1,9 @@
-"""Sorts through screenshots
+"""Sorts through screenshots of news sites and stitches together screenshots
+detected to belong to a "group" of one screenshot from each paper within a few
+minutes of each other.
+
+Chuan-Zheng Lee
+© January 2021
 """
 
 from collections import Counter
