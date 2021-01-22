@@ -6,105 +6,102 @@ Chuan-Zheng Lee
 © January 2021
 """
 
-from collections import Counter
-from itertools import islice
+from itertools import chain
 from pathlib import Path
-import argparse
+from PIL import Image, ImageDraw, ImageFont
+from PIL.ImageChops import difference
 import datetime
-import png
 import shutil
 
 IMAGES_DIR = Path('images')
 SORTED_DIR = Path('sorted')
 OUTPUT_DIR = Path('output')
 
-# These specify rows (of pixels) in images that are used as "examples". That is,
-# if another image has the same row of pixels at the same vertical location, it
-# is assumed to be from the same newspaper. Both newspapers and my screenshots
-# weren't always consistent, so there are multiple "signature rows" for each
-# paper, and an image matches if any one signature row matches. The Washington
-# Post needs more signatures because it doesn't have any unique colours (unlike
-# Fox's blue and CNN's red), so we have to take a row that crosses its logo,
-# which is too complicated to be consistent. (Also, its design changed more
-# often.)
+# These specify regions in images to be used as "examples". That is, if another
+# image has exactly the same image in the same location, it is assumed to be
+# from the same newspaper. Both newspapers and my screenshots weren't always
+# consistent, so there are multiple "signature regions" for each paper, and an
+# image matches if any one signature region matches.
 SIGNATURES_IN_FILES = {
     "fox": [
-        ('images/Screenshot_2018-09-05-08-59-19.png', 329),
-        ('images/Screenshot_2018-11-22-12-11-31.png', 353),
-        ('images/Screenshot_2020-05-29-14-19-45.png', 397),
-        ('images/Screenshot_2020-06-04-22-33-11.png', 117),
+        ('images/Screenshot_2018-09-05-08-59-19.png', (10, 340, 330, 500)),
+        ('images/Screenshot_2019-04-21-09-48-31.png', (10, 340, 330, 500)),
+        ('images/Screenshot_2020-06-04-22-33-11.png', (10, 140, 330, 300)),
     ],
     "cnn": [
-        ('images/Screenshot_2018-08-23-18-56-27.png', 655),
-        ('images/Screenshot_2018-09-05-18-27-31.png', 328),
-        ('images/Screenshot_2018-11-07-18-15-31.png', 352),
-        ('images/Screenshot_2019-04-21-09-48-16.png', 388),
-        ('images/Screenshot_2020-05-29-14-20-14.png', 396),
-        ('images/Screenshot_2020-12-11-19-49-31.png', 108),
+        ('images/Screenshot_2018-06-17-23-24-36.png', (10, 360, 230, 520)),
+        ('images/Screenshot_2019-04-21-09-48-16.png', (10, 360, 230, 520)),
+        ('images/Screenshot_2020-05-29-14-20-14.png', (80, 370, 130, 520)),
+        ('images/Screenshot_2020-06-02-11-14-57.png', (80, 120, 130, 270)),
+        ('images/Screenshot_2018-08-23-18-56-27.png', (10, 700, 230, 850)),
     ],
     "wap": [
-        ('images/Screenshot_2018-09-05-18-27-49.png', 169),
-        ('images/Screenshot_2018-11-08-09-27-13.png', 170),
-        ('images/Screenshot_2019-05-14-19-16-47.png', 165),
-        ('images/Screenshot_2019-07-28-20-29-21.png', 171),
-        ('images/Screenshot_2019-11-05-18-51-15.png', 174),
-        ('images/Screenshot_2019-12-20-09-58-03.png', 166),
-        ('images/Screenshot_2020-02-11-13-19-33.png', 172),
-        ('images/Screenshot_2020-02-18-14-23-00.png', 173),
-        ('images/Screenshot_2020-04-18-03-37-26.png', 168),
-        ('images/Screenshot_2020-09-28-12-55-09.png', 200),
-        ('images/Screenshot_2020-10-01-08-09-57.png', 181),
-        ('images/Screenshot_2020-11-08-21-19-42.png', 167),
-        ('images/Screenshot_2020-12-24-16-19-17.png', 197),
-        ('images/Screenshot_2021-01-04-08-30-50.png', 196),
-    ]
+        ('images/Screenshot_2018-06-17-23-25-29.png', (60, 160, 210, 270)),
+        ('images/Screenshot_2019-05-14-19-16-47.png', (60, 100, 230, 220)),
+        ('images/Screenshot_2019-11-20-13-02-31.png', (60, 120, 200, 300)),  # this is the menu icon
+        ('images/Screenshot_2020-09-20-23-19-21.png', (60, 160, 200, 300)),  # this is the menu icon
+        ('images/Screenshot_2019-04-21-09-48-47.png', (60, 130, 240, 260)),
+    ],
 }
 
-ROWS = {row for sigs in SIGNATURES_IN_FILES.values() for _, row in sigs}
-FIRST_ROW = min(ROWS)
-LAST_ROW = max(ROWS)
+
 PAPERS = set(SIGNATURES_IN_FILES.keys())
-INSIDE_BORDER_COLOUR = bytearray(b'\xff\xff\xff')
-INSIDE_BORDER_WIDTH = 10
-INSIDE_BORDER = INSIDE_BORDER_COLOUR * INSIDE_BORDER_WIDTH
+DIFF_THRESHOLD = 20
+HIST_THRESHOLD = 10000
+
+BACKGROUND_COLOUR = (220, 220, 220)
+INSIDE_BORDER_WIDTH = 5
+INSIDE_BORDER = BACKGROUND_COLOUR * INSIDE_BORDER_WIDTH
 SCREENSHOT_WIDTH = 1440
-STITCHED_WIDTH = SCREENSHOT_WIDTH * len(PAPERS) + INSIDE_BORDER_WIDTH * (len(PAPERS) - 1)
-STITCHED_HEIGHT = 2004
+SCREENSHOT_HEIGHT = 2004
+TEXT_HEIGHT = 22
+TEXT_MARGIN = 4
+HEADER_HEIGHT = TEXT_HEIGHT + 2 * TEXT_MARGIN
+RESIZED_WIDTH = SCREENSHOT_WIDTH // 3
+RESIZED_HEIGHT = SCREENSHOT_HEIGHT // 3
+STITCHED_WIDTH = RESIZED_WIDTH * len(PAPERS) + INSIDE_BORDER_WIDTH * (len(PAPERS) - 1)
+STITCHED_HEIGHT = HEADER_HEIGHT + RESIZED_HEIGHT
+
+for key in {'none'} | PAPERS:
+    (SORTED_DIR / key).mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(exist_ok=True)
 
 
 def build_signature_library():
-    """Converts the data in SIGNATURES_IN_FILES to {rowno: {paper: (entryno, row)}}"""
-    signature_library = {}
+    """Converts the data in SIGNATURES_IN_FILES to [(box, region, paper, entryno)]"""
+    signature_library = []
     for paper, sigs in SIGNATURES_IN_FILES.items():
-        for entryno, (filename, rowno) in enumerate(sigs):
-            reader = png.Reader(filename)
-            _, _, values, _ = reader.read()
-            row = next(islice(values, rowno, rowno+1))
-            signature_library.setdefault(rowno, {}).update({paper: (entryno, row)})
+        for entryno, (filename, box) in enumerate(sigs):
+            im = Image.open(filename)
+            region = im.crop(box)
+            hist = region.histogram()
+            signature_library.append((box, region, hist, paper, entryno))
     return signature_library
 
 
-def match_image(values, signature_library):
-    """Determines which paper an image came from, returning the name of the paper,
-    the row number of the matched pixels, and the entry number in the signature library."""
-    for rowno, row in enumerate(islice(values, FIRST_ROW, LAST_ROW+1), start=FIRST_ROW):
-        if rowno not in ROWS:
-            continue
-        for name, (entryno, signature) in signature_library[rowno].items():
-            if row == signature:
-                return (name, rowno, entryno)
-    return None, None, None
+def match_image(im, signature_library):
+    """Determines which paper an image came from, returning the name of the
+    paper and the entry number in the signature library."""
+    for box, signature, hist, paper, entryno in signature_library:
+        region = im.crop(box)
+        diff = difference(signature, region)
+        diff_value = max(chain(*diff.getextrema()))
+        hist_value = sum([abs(x - y) for x, y in zip(hist, region.histogram())])
+        if diff_value <= DIFF_THRESHOLD or hist_value <= HIST_THRESHOLD:
+            return (paper, entryno, diff_value, hist_value)
+
+    return None, None, None, None
 
 
 def handle_group(group):
-        if {paper for paper, _, _ in group} == PAPERS:
-            if len(group) == 3:
-                print("\033[1;32m ✓ This is a complete group!\033[0m")
-                stitch_images(group)
-            else:
-                print("\033[0;33m ⦿ Too many images, maybe drop some?\033[0m")
+    if {paper for paper, _, _ in group} == PAPERS:
+        if len(group) == 3:
+            print("\033[1;32m ✓ This is a complete group!\033[0m")
+            stitch_images(group)
         else:
-            print("\033[0;31m × This is not a complete group.\033[0m")
+            print("\033[0;33m ⦿ Too many images, maybe drop some?\033[0m")
+    else:
+        print("\033[0;31m × This is not a complete group.\033[0m")
 
 
 def stitch_images(group):
@@ -116,9 +113,8 @@ def stitch_images(group):
 
     for paper, filepath, time in group:
         index = paper_order.index(paper)
-        reader = png.Reader(open(filepath, 'rb'))
-        _, _, values, _ = reader.read()
-        images[index] = values
+        im = Image.open(filepath)
+        images[index] = im
         times.append(time)
 
     # extract median time of image
@@ -126,72 +122,60 @@ def stitch_images(group):
     filename = median_time.strftime("stitched-%Y-%m-%d-%H-%M.png")
     print("\033[1;34m → writing to: " + filename + "\033[0m")
 
-    outarray = []
-    first_stitched_row = bytearray(b'')
-
-    # find first row of each image
-    # status bar is 96 pixels so start at row 97
-    # detection method is different for each paper
+    first_rows = []
 
     # cnn and fox: first row in each the 100th pixel is red
-    for paper, image in zip(paper_order[:2], images[:2]):
-        for row in image:
-            if row[300] > row[301] and row[300] > row[302]:
-                first_stitched_row += row + INSIDE_BORDER
-                break
-        else:
-            print(f"\033[1;31m !! No first row found in {paper} image\033[0m")
-            return
+    def find_first_row(im):
+        for i in range(96, 400):
+            r, g, b = im.getpixel((100, i))
+            if r > g and r > b:
+                return i
+    first_rows = [find_first_row(im) for im in images[:2]]
 
     # wapo: just burn the first 96 rows if images is from before 2019, 108 rows if after
-    status_bar_height = 96 if times[2].year < 2019 else 108
-    for i in range(status_bar_height):
-        next(images[2])
+    first_rows.append(96 if times[2].year < 2019 else 108)
 
-    # stitch subsequent rows together
-    writer = png.Writer(width=STITCHED_WIDTH, height=STITCHED_HEIGHT, greyscale=False)
-    for i, (cnn_row, fox_row, wap_row) in enumerate(zip(*images)):
-        outarray.append(cnn_row + INSIDE_BORDER + fox_row + INSIDE_BORDER + wap_row)
-        if i == STITCHED_HEIGHT - 1:
-            break
+    if None in first_rows:
+        print(f"\033[1;31m !! No first row found in one or more images: {first_rows}\033[0m")
+        return
+
+    # stitch chosen regions together
+    output = Image.new('RGB', (STITCHED_WIDTH, STITCHED_HEIGHT), color=BACKGROUND_COLOUR)
+    for i, (first_row, im) in enumerate(zip(first_rows, images)):
+        region = im.crop((0, first_row, SCREENSHOT_WIDTH, first_row + SCREENSHOT_HEIGHT))
+        resized = region.resize((RESIZED_WIDTH, RESIZED_HEIGHT))
+        left = (RESIZED_WIDTH + INSIDE_BORDER_WIDTH) * i
+        output.paste(resized, (left, HEADER_HEIGHT, left + RESIZED_WIDTH, HEADER_HEIGHT + RESIZED_HEIGHT))
+
+    date_text = median_time.strftime("%B %-d, %Y, at %-I:%M%P")
+    date_font = ImageFont.truetype("DejaVuSans.ttf", size=TEXT_HEIGHT)
+    d = ImageDraw.Draw(output)
+    d.text((STITCHED_WIDTH // 2, TEXT_MARGIN), date_text, font=date_font, fill=(0, 0, 0), anchor='mt')
 
     # write to file
-    outfile = open(OUTPUT_DIR / filename, 'wb')
-    writer.write_packed(outfile, outarray)
-    outfile.close()
+    output.save(OUTPUT_DIR / filename)
 
-
-# Make directories to copy images to
-for key in {'none'} | PAPERS:
-    (SORTED_DIR / key).mkdir(parents=True, exist_ok=True)
-OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Gather signatures
 signature_library = build_signature_library()
 
 # Match images
-
 current_group = []
 earliest_in_group = None
-total_matched = {key: Counter() for key in PAPERS}
+total_matched = {paper: [0] * len(sigs) for paper, sigs in SIGNATURES_IN_FILES.items()}
 
 for child in sorted(IMAGES_DIR.iterdir()):
-    reader = png.Reader(str(child))
-    width, height, values, properties = reader.read()
-    if width != 1440:
-        print(f"{child}: wrong dimension ({height} x {width})")
-
-    paper, rowno, entryno = match_image(values, signature_library)
+    im = Image.open(child)
+    paper, entryno, diff_value, hist_value = match_image(im, signature_library)
 
     if paper is None:
-        print(f"matched {child}: -")
+        print(f"{child}: -")
         shutil.copy(child, SORTED_DIR / 'none' / child.name)
         continue
 
-    total_matched[paper][(entryno, rowno)] += 1
+    total_matched[paper][entryno] += 1
     shutil.copy(child, SORTED_DIR / paper / child.name)  # copy to a folder for easy review
 
-    # log in matched images
     time = datetime.datetime.strptime(child.name, "Screenshot_%Y-%m-%d-%H-%M-%S.png")
 
     if not current_group:
@@ -206,13 +190,9 @@ for child in sorted(IMAGES_DIR.iterdir()):
         current_group = [(paper, child, time)]
         earliest_in_group = time
 
-    print(f"{child}: {paper} ({entryno}) at {rowno}")
-
-
-handle_group(current_group)
+    print(f"{child}: {paper} ({entryno}, {diff_value}, {hist_value})")
 
 
 for paper, counts in sorted(total_matched.items()):
-    total = sum(count for _, count in counts.items())
-    print(f"{paper}, total {total} - " + ", ".join(
-        f"{entryno}-{rowno}: {count}" for (entryno, rowno), count in sorted(counts.items())))
+    total = sum(counts)
+    print(f"{paper}, total {total} - {counts}")
