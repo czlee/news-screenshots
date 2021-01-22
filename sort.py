@@ -81,7 +81,14 @@ def build_signature_library():
 
 def match_image(im, signature_library):
     """Determines which paper an image came from, returning the name of the
-    paper and the entry number in the signature library."""
+    paper and the entry number in the signature library. Uses a crude metric:
+    A region "matches" the signature region if either
+     - its pixels all match, or differ by at most `DIFF_THRESHOLD`, or
+     - the sum (over colors) of the number of times each color occurs (i.e., its
+       histogram) differs by at most `HIST_THRESHOLD` (this should capture
+       translations, and is overly permissive in theory but works fine given our
+       set of images).
+    """
     for box, signature, hist, paper, entryno in signature_library:
         region = im.crop(box)
         diff = difference(signature, region)
