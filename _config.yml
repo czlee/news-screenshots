@@ -1,1 +1,5 @@
-theme: jekyll-theme-modernist
+theme: jekyll-theme-slate
+title: Screenshots of newspapers
+description: Comparisons of CNN, Fox and WaPo front pages
+exclude:
+  - README.md

@@ -1,3 +1,7 @@
+---
+title: "Screenshots of newspapers"
+---
+
 # Screenshots of newspapers
 
 ![Screenshots at 2018-06-17 23:24](output/stitched-2018-06-17-23-24.png)
