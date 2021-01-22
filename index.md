@@ -1,7 +1,7 @@
 _Chuan-Zheng Lee_ <br />
 _January 21, 2021_
 
-In June 2018 I started taking concurrent screenshots of CNN, Fox and the
+In June 2018 I started taking concurrent screenshots of CNN, Fox News and the
 Washington Post, to put them side by side. I was curious about how their
 reporting on events would compare, or sometimes what stories they would
 prioritize.
@@ -28,9 +28,9 @@ together. The time on the stitched images refers to the median timestamp among
 the three screenshots.
 
 **Commentary:** I'd rather leave the judgement to you, but my rough impression
-was that while there are certainly noticeable differences in emphasis between
-the outlets a lot of the time, it wasn't all the time: during very major events
-like disasters or elections, they tended to run the same lead headlines.
+was that while there are noticeable differences in emphasis between the outlets
+a lot of the time, I wouldn't describe it nearly all the time: during major
+events like disasters or elections, they tended to run the same lead headlines.
 
 All times are in Pacific time.
 
@@ -54,14 +54,15 @@ All times are in Pacific time.
 
 ![Screenshots at 2018-08-22 02:15](output/stitched-2018-08-22-02-15.png)
 
-The group above deserves a little more commentary. The alleged murderer of
+The two groups above deserve a little more commentary. The alleged murderer of
 Mollie Tibbetts, who is an undocumented immigrant, was arrested on the same day
 that Michael Cohen pleaded guilty to a range of election-related offenses. You
-can see which stories outlets prioritized above. While CNN and WaPo covered the
-case, it wasn't a major story on either at the time. But on September 1, a bit
-more than a week later, Tibbetts' father had a column published in the Des
-Moines Register, asking politicians not to politicize her death to advance views
-that she believed were racist.
+can see which stories outlets prioritized above (the above two are basically
+from the same day). While CNN and WaPo covered the case, it wasn't a major story
+on either at the time. But on September 1, a bit more than a week later,
+Tibbetts' father had a column published in the Des Moines Register, asking
+politicians not to politicize her death to advance views that she believed were
+racist.
 [CNN](https://www.cnn.com/2018/09/02/us/mollie-tibbetts-father-op-ed/index.html)
 and
 [WaPo](https://www.washingtonpost.com/nation/2018/09/02/mollie-tibbettss-dad-dont-use-her-death-push-views-she-believed-were-profoundly-racist/?utm_term=.192f696df2da)
