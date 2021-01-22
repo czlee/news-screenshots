@@ -3,3 +3,6 @@ title: Screenshots of news sites
 description: Comparisons of CNN, Fox and WaPo front pages
 exclude:
   - README.md
+  - sort.py
+  - sort-pypng.py
+  - requirements.txt
