@@ -49,16 +49,16 @@ PAPERS = set(SIGNATURES_IN_FILES.keys())
 DIFF_THRESHOLD = 20
 HIST_THRESHOLD = 10000
 
-BACKGROUND_COLOUR = (220, 220, 220)
+BACKGROUND_COLOUR = (210, 210, 210)
 INSIDE_BORDER_WIDTH = 5
 INSIDE_BORDER = BACKGROUND_COLOUR * INSIDE_BORDER_WIDTH
 SCREENSHOT_WIDTH = 1440
 SCREENSHOT_HEIGHT = 2004
-TEXT_HEIGHT = 22
+TEXT_HEIGHT = 16
 TEXT_MARGIN = 4
 HEADER_HEIGHT = TEXT_HEIGHT + 2 * TEXT_MARGIN
-RESIZED_WIDTH = SCREENSHOT_WIDTH // 3
-RESIZED_HEIGHT = SCREENSHOT_HEIGHT // 3
+RESIZED_WIDTH = SCREENSHOT_WIDTH // 4
+RESIZED_HEIGHT = SCREENSHOT_HEIGHT // 4
 STITCHED_WIDTH = RESIZED_WIDTH * len(PAPERS) + INSIDE_BORDER_WIDTH * (len(PAPERS) - 1)
 STITCHED_HEIGHT = HEADER_HEIGHT + RESIZED_HEIGHT
 
@@ -182,7 +182,7 @@ for child in sorted(IMAGES_DIR.iterdir()):
         current_group.append((paper, child, time))
         earliest_in_group = time
 
-    elif time - earliest_in_group < datetime.timedelta(minutes=10):
+    elif time - earliest_in_group < datetime.timedelta(minutes=6):
         current_group.append((paper, child, time))
 
     else:
