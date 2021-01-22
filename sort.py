@@ -117,8 +117,15 @@ def stitch_images(group):
         images[index] = im
         times.append(time)
 
-    # extract median time of image
+    # extract median time of image, adjust for time zones
     median_time = sorted(times)[1]
+    if median_time > datetime.datetime(2020, 11, 1):
+        median_time -= datetime.timedelta(hours=21)
+    elif median_time > datetime.datetime(2020, 9, 27):
+        median_time -= datetime.timedelta(hours=20)
+    elif median_time > datetime.datetime(2020, 9, 1):
+        median_time -= datetime.timedelta(hours=19)
+
     filename = median_time.strftime("stitched-%Y-%m-%d-%H-%M.png")
     print("\033[1;34m → writing to: " + filename + "\033[0m")
 
@@ -192,6 +199,7 @@ for child in sorted(IMAGES_DIR.iterdir()):
 
     print(f"{child}: {paper} ({entryno}, {diff_value}, {hist_value})")
 
+handle_group(current_group)
 
 for paper, counts in sorted(total_matched.items()):
     total = sum(counts)

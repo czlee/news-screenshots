@@ -32,6 +32,8 @@ was that while there are certainly noticeable differences in emphasis between
 the outlets a lot of the time, it wasn't all the time: during very major events
 like disasters or elections, they tended to run the same lead headlines.
 
+All times are in Pacific time.
+
 ## Screenshots
 
 ![Screenshots at 2018-06-17 23:24](output/stitched-2018-06-17-23-24.png)
@@ -168,56 +170,58 @@ group below.
 
 ![Screenshots at 2020-08-05 11:00](output/stitched-2020-08-05-11-00.png)
 
-![Screenshots at 2020-09-20 23:18](output/stitched-2020-09-20-23-18.png)
+![Screenshots at 2020-09-20 04:18](output/stitched-2020-09-20-04-18.png)
 
-![Screenshots at 2020-09-28 12:56](output/stitched-2020-09-28-12-56.png)
+![Screenshots at 2020-09-27 16:56](output/stitched-2020-09-27-16-56.png)
 
-![Screenshots at 2020-10-01 08:09](output/stitched-2020-10-01-08-09.png)
+![Screenshots at 2020-09-30 12:09](output/stitched-2020-09-30-12-09.png)
 
-![Screenshots at 2020-10-03 19:56](output/stitched-2020-10-03-19-56.png)
+![Screenshots at 2020-10-02 23:56](output/stitched-2020-10-02-23-56.png)
 
-![Screenshots at 2020-11-03 11:22](output/stitched-2020-11-03-11-22.png)
+![Screenshots at 2020-11-02 14:22](output/stitched-2020-11-02-14-22.png)
 
-![Screenshots at 2020-11-04 20:46](output/stitched-2020-11-04-20-46.png)
+![Screenshots at 2020-11-03 23:46](output/stitched-2020-11-03-23-46.png)
 
-![Screenshots at 2020-11-06 10:41](output/stitched-2020-11-06-10-41.png)
+![Screenshots at 2020-11-05 13:41](output/stitched-2020-11-05-13-41.png)
 
-![Screenshots at 2020-11-08 06:58](output/stitched-2020-11-08-06-58.png)
+![Screenshots at 2020-11-07 09:58](output/stitched-2020-11-07-09-58.png)
 
-![Screenshots at 2020-11-08 12:38](output/stitched-2020-11-08-12-38.png)
+![Screenshots at 2020-11-07 15:38](output/stitched-2020-11-07-15-38.png)
 
-![Screenshots at 2020-11-08 21:19](output/stitched-2020-11-08-21-19.png)
+![Screenshots at 2020-11-08 00:19](output/stitched-2020-11-08-00-19.png)
 
-![Screenshots at 2020-11-17 14:20](output/stitched-2020-11-17-14-20.png)
+![Screenshots at 2020-11-16 17:20](output/stitched-2020-11-16-17-20.png)
 
-![Screenshots at 2020-11-20 09:17](output/stitched-2020-11-20-09-17.png)
+![Screenshots at 2020-11-19 12:17](output/stitched-2020-11-19-12-17.png)
 
-![Screenshots at 2020-12-06 18:57](output/stitched-2020-12-06-18-57.png)
+![Screenshots at 2020-12-05 21:57](output/stitched-2020-12-05-21-57.png)
 
-![Screenshots at 2020-12-11 19:49](output/stitched-2020-12-11-19-49.png)
+![Screenshots at 2020-12-10 22:49](output/stitched-2020-12-10-22-49.png)
 
-![Screenshots at 2020-12-12 08:48](output/stitched-2020-12-12-08-48.png)
+![Screenshots at 2020-12-11 11:48](output/stitched-2020-12-11-11-48.png)
 
-![Screenshots at 2020-12-15 12:42](output/stitched-2020-12-15-12-42.png)
+![Screenshots at 2020-12-14 15:42](output/stitched-2020-12-14-15-42.png)
 
-![Screenshots at 2020-12-24 16:18](output/stitched-2020-12-24-16-18.png)
+![Screenshots at 2020-12-23 19:18](output/stitched-2020-12-23-19-18.png)
 
-![Screenshots at 2021-01-04 08:30](output/stitched-2021-01-04-08-30.png)
+![Screenshots at 2021-01-03 11:30](output/stitched-2021-01-03-11-30.png)
 
-![Screenshots at 2021-01-04 22:26](output/stitched-2021-01-04-22-26.png)
+![Screenshots at 2021-01-04 01:26](output/stitched-2021-01-04-01-26.png)
 
-![Screenshots at 2021-01-06 10:38](output/stitched-2021-01-06-10-38.png)
+![Screenshots at 2021-01-05 13:38](output/stitched-2021-01-05-13-38.png)
 
-![Screenshots at 2021-01-07 09:46](output/stitched-2021-01-07-09-46.png)
+![Screenshots at 2021-01-06 12:46](output/stitched-2021-01-06-12-46.png)
 
-![Screenshots at 2021-01-09 15:16](output/stitched-2021-01-09-15-16.png)
+![Screenshots at 2021-01-08 18:16](output/stitched-2021-01-08-18-16.png)
 
-![Screenshots at 2021-01-10 10:26](output/stitched-2021-01-10-10-26.png)
+![Screenshots at 2021-01-09 13:26](output/stitched-2021-01-09-13-26.png)
 
-![Screenshots at 2021-01-14 17:25](output/stitched-2021-01-14-17-25.png)
+![Screenshots at 2021-01-13 20:25](output/stitched-2021-01-13-20-25.png)
 
-![Screenshots at 2021-01-15 11:37](output/stitched-2021-01-15-11-37.png)
+![Screenshots at 2021-01-14 14:37](output/stitched-2021-01-14-14-37.png)
 
-![Screenshots at 2021-01-15 14:02](output/stitched-2021-01-15-14-02.png)
+![Screenshots at 2021-01-14 17:02](output/stitched-2021-01-14-17-02.png)
 
-![Screenshots at 2021-01-19 10:08](output/stitched-2021-01-19-10-08.png)
+![Screenshots at 2021-01-18 13:08](output/stitched-2021-01-18-13-08.png)
+
+![Screenshots at 2021-01-20 22:34](output/stitched-2021-01-20-22-34.png)
