@@ -1,5 +1,5 @@
 theme: jekyll-theme-slate
-title: Screenshots of newspapers
+title: Screenshots of news sites
 description: Comparisons of CNN, Fox and WaPo front pages
 exclude:
   - README.md
